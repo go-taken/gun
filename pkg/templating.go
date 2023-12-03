@@ -6,10 +6,10 @@ import (
 	"regexp"
 )
 
-func ReplaceWithText(input any, replacements map[string]any) (any, error) {
+func Render(input any, replacements map[string]any) (string, error) {
 	inputType := reflect.TypeOf(input)
 	if inputType.Kind() != reflect.String {
-		return nil, fmt.Errorf("input must be of type string")
+		return "", fmt.Errorf("input must be of type string")
 	}
 
 	re := regexp.MustCompile(`\{(\w+)\}`)
