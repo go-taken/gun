@@ -4,25 +4,35 @@ import (
 	_ "embed"
 	"fmt"
 	"os"
+	"sync"
 
 	"github.com/go-taken/gun/pkg"
+	"github.com/go-taken/gun/src/html/body"
 	"github.com/go-taken/gun/src/html/head"
 )
 
 type HTML struct {
+	sync.Mutex
 	Head   *head.Head
-	Body   string
+	Body   *body.Body
 	render func(string, map[string]any) (string, error)
 }
 
 func New() *HTML {
-	return &HTML{
-		Head: head.NewHead(),
-	}
+	return &HTML{}
 }
 
-func (h *HTML) SetBody(body string) *HTML {
-	h.Body = body
+func (h *HTML) SetHead() *HTML {
+	h.Mutex.Lock()
+	h.Head = head.NewHead()
+	h.Mutex.Unlock()
+	return h
+}
+
+func (h *HTML) SetBody() *HTML {
+	h.Mutex.Lock()
+	h.Body = body.NewBody()
+	h.Mutex.Unlock()
 	return h
 }
 
@@ -36,7 +46,7 @@ func (h *HTML) Start() error {
 	}
 	html, err := h.run().render(app, map[string]any{
 		"head": h.Head.RenderHead(),
-		"body": h.Body,
+		"body": h.Body.RenderBody(),
 	})
 	if err != nil {
 		return err

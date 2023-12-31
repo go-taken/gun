@@ -32,22 +32,22 @@ func NewHead() *Head {
 }
 
 func (h *Head) SetTitle(title string) *Head {
-	h.Title = fmt.Sprintf("<title>%s</title> \n", title)
+	h.Title = fmt.Sprintf("\t <title>%s</title> \n", title)
 	return h
 }
 
 func (h *Head) SetMeta(meta string) *Head {
-	h.Meta = append(h.Meta, fmt.Sprintf("<meta %s> \n", meta))
+	h.Meta = append(h.Meta, fmt.Sprintf("\t <meta %s> \n", meta))
 	return h
 }
 
 func (h *Head) SetScript(script string) *Head {
-	h.Script = append(h.Script, fmt.Sprintf("<script %s></script> \n", script))
+	h.Script = append(h.Script, fmt.Sprintf("\t <script %s></script> \n", script))
 	return h
 }
 
 func (h *Head) SetLink(link string) *Head {
-	h.Link = append(h.Link, fmt.Sprintf("<link %s> \n", link))
+	h.Link = append(h.Link, fmt.Sprintf("\t <link %s> \n", link))
 	return h
 }
 
@@ -60,5 +60,5 @@ func (h *Head) GetMeta() string { return strings.Join(h.Meta, "") }
 func (h *Head) GetLink() string { return strings.Join(h.Link, "") }
 
 func (h *Head) RenderHead() string {
-	return fmt.Sprintf("%s%s%s%s", h.GetTitle(), h.GetMeta(), h.GetLink(), h.GetScript())
+	return fmt.Sprintf("<head>\n%s%s%s%s</head>", h.GetTitle(), h.GetMeta(), h.GetLink(), h.GetScript())
 }
