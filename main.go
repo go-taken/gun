@@ -5,9 +5,12 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/go-taken/gun/pkg"
 )
 
 var html = ""
+var logger = pkg.NewLogger()
 
 func main() {
 	// html := html.New()
@@ -32,65 +35,44 @@ func main() {
 	defer file.Close()
 
 	// Decode JSON dari file
-	var tag HTML
+	var tag []HTML
 	decoder := json.NewDecoder(file)
 	err = decoder.Decode(&tag)
 	if err != nil {
-		fmt.Println("Error decoding JSON:", err)
+		logger.Error(err)
 		return
 	}
 	html += "<!DOCTYPE html> \n"
-	html += "<html>"
-	checkContent(tag.Content)
-	html += "\n</html>"
+	checkContent(tag)
 	CreateDocument(html)
 }
 
-func checkContent(htmlContent any) {
-	text := ""
-	contens, err := UnmarshalContent(htmlContent)
+func checkContent(tags any) {
+	contens, err := UnmarshalContent(tags)
 	if err != nil {
-		res, err := UnmarshalContentArray(htmlContent)
-		if err != nil {
-			fmt.Println(err)
+		res, err2 := UnmarshalContentArray(tags)
+		if err2 != nil {
+			logger.Error(err2)
 		}
-		text = strings.Join(res, " ")
-		html += strings.Join(res, "")
+		html += fmt.Sprintf("\n%s", strings.Join(res, " "))
 	}
 	for _, content := range contens {
 		if tag := content.Tag != ""; tag {
-			class := ""
-			if content.Attr.Class != "" {
-				class = fmt.Sprintf("class=\"%s\"", content.Attr.Class)
+			attrs := ""
+			for _, attr := range content.Attr {
+				attrs += fmt.Sprintf(` %s="%s"`, attr.Name, attr.Value)
 			}
-			
-			id := ""
-			if content.Attr.ID != "" {
-				id = fmt.Sprintf("id=\"%s\"", content.Attr.ID)
+			if ok := pkg.ValidateVoidElement(content.Tag); ok {
+				html += fmt.Sprintf("\n<%s %s />", content.Tag, attrs)
+			} else {
+				html += fmt.Sprintf("\n<%s %s>", content.Tag, attrs)
 			}
-
-			typeTag := ""
-			if content.Attr.Type != "" {
-				typeTag = fmt.Sprintf("type=\"%s\"", content.Attr.Type)
-			}
-
-			name := ""
-			if content.Attr.Name != "" {
-				name = fmt.Sprintf("name=\"%s\"", content.Attr.Name)
-			}
-
-			value := ""
-			if content.Attr.Value != "" {
-				value = fmt.Sprintf("value=\"%s\"", content.Attr.Value)
-			}
-
-			html += fmt.Sprintf("\n<%s %s %s %s %s %s>", content.Tag, class, id, typeTag, name, value)
 		}
 		if content.Content != nil {
 			checkContent(content.Content)
-			html += text
-			html += fmt.Sprintf("\n</%s>  ", content.Tag)
-			text = ""
+			if ok := pkg.ValidateVoidElement(content.Tag); !ok {
+				html += fmt.Sprintf("\n</%s>", content.Tag)
+			}
 		}
 	}
 }
@@ -133,16 +115,11 @@ func CreateDocument(html string) error {
 
 type HTML struct {
 	Tag     string `json:"tag"`
-	Class   string `json:"class"`
-	ID      string `json:"id"`
-	Attr    Attr   `json:"attr"`
+	Attr    []Attr `json:"attr"`
 	Content []any  `json:"content"`
 }
 
 type Attr struct {
-	Class string `json:"class"`
-	ID    string `json:"id"`
-	Type  string `json:"type"`
 	Name  string `json:"name"`
 	Value string `json:"value"`
 }
@@ -151,9 +128,6 @@ type Content struct {
 	Tag     string `json:"tag"`
 	Class   string `json:"class"`
 	ID      string `json:"id"`
-	Attr    Attr   `json:"attr"`
+	Attr    []Attr `json:"attr"`
 	Content []any  `json:"content"`
-}
-type ContentString struct {
-	Content []string `json:"content"`
 }
