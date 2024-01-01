@@ -31,15 +31,15 @@ type Content struct {
 	Content []any  `json:"content"`
 }
 
-func NewJsonToHTML(filename string) {
+func NewJsonToHTML(path string) {
 
-	file, err := os.Open(filename)
+	file, err := os.Open(path)
 	if err != nil {
 		fmt.Println("Error opening file:", err)
 		return
 	}
 	defer file.Close()
-
+	filename := strings.Replace(path, ".json", ".html", -1)
 	// Decode JSON dari file
 	var tag []HTML
 	decoder := json.NewDecoder(file)
