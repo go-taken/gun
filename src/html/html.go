@@ -1,65 +1,49 @@
 package html
 
-import (
-	_ "embed"
-	"fmt"
-	"os"
-	"sync"
-
-	"github.com/go-taken/gun/pkg"
-	"github.com/go-taken/gun/src/html/body"
-	"github.com/go-taken/gun/src/html/head"
-)
-
 type HTML struct {
-	sync.Mutex
-	Head   *head.Head
-	Body   *body.Body
-	render func(string, map[string]any) (string, error)
+	Tag     string `json:"tag"`
+	Attr    []Attr `json:"attr"`
+	Value   string `json:"value"`
+	Content []HTML `json:"content"`
 }
 
-func New() *HTML {
-	return &HTML{}
+type Attr struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
 }
 
-func (h *HTML) SetHead() *HTML {
-	h.Mutex.Lock()
-	h.Head = head.NewHead()
-	h.Mutex.Unlock()
-	return h
-}
-
-func (h *HTML) SetBody() *HTML {
-	h.Mutex.Lock()
-	h.Body = body.NewBody()
-	h.Mutex.Unlock()
-	return h
-}
-
-//go:embed app.html
-var app string
-
-func (h *HTML) Start() error {
-	os.RemoveAll("dist")
-	if err := os.Mkdir("dist", 0755); err != nil {
-		return err
+func New() []HTML {
+	html := []HTML{
+		{
+			Tag: "html",
+			Attr: []Attr{
+				{
+					Name:  "lang",
+					Value: "en",
+				},
+			},
+			Content: []HTML{
+				{
+					Tag: "head",
+					Content: []HTML{
+						{
+							Tag: "meta",
+							Attr: []Attr{
+								{
+									Name:  "charset",
+									Value: "UTF-8",
+								},
+							},
+						},
+						{
+							Tag:     "title",
+							Value:   "Title",
+							Content: []HTML{},
+						},
+					},
+				},
+			},
+		},
 	}
-	html, err := h.run().render(app, map[string]any{
-		"head": h.Head.RenderHead(),
-		"body": h.Body.RenderBody(),
-	})
-	if err != nil {
-		return err
-	}
-	fmt.Println(html)
-	os.WriteFile("dist/index.html", []byte(html), 0644)
-	return err
-}
-
-func (h *HTML) run() *HTML {
-	h.render = func(s string, m map[string]any) (string, error) {
-		return pkg.Render(s, m)
-	}
-
-	return h
+	return html
 }
