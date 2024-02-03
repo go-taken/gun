@@ -1,0 +1,12 @@
+[
+  {
+    "tag": "button",
+    "value": "Submit",
+    "attr":[
+      {
+        "name": "type",
+        "value": "submit"
+      }
+    ]
+  }
+]
