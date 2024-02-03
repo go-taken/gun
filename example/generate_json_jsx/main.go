@@ -23,7 +23,8 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	html := decode.NewDecodeHTML("Button")
-	button := html.ToHTMLComponentString(tag)
-	fmt.Println(button)
+	jsx := decode.NewDecodeJSX("Button")
+	buttonJSX := jsx.ToJSXString(tag)
+	fmt.Println(buttonJSX)
+
 }

@@ -23,7 +23,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	html := decode.NewDecodeHTML("Button")
-	button := html.ToHTMLComponentString(tag)
-	fmt.Println(button)
+	vue := decode.NewDecodeVue("Button")
+	buttonVue := vue.ToVueString(tag)
+	fmt.Println(buttonVue)
 }
