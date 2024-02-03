@@ -9,7 +9,7 @@
         "content": [
           {
             "tag": "title",
-            "content": ["asdf"]
+            "value": "asdf"
           },
           {
             "tag": "script",
@@ -18,8 +18,7 @@
                 "name": "src",
                 "value": "https://cdn.tailwindcss.com"
               }
-            ],
-            "content": []
+            ]
           }
         ]
       },
@@ -52,7 +51,7 @@
                     "value": "asdf"
                   }
                 ],
-                "content": ["sdf"]
+                "value": "sdf"
               },
               {
                 "tag": "div",
@@ -79,7 +78,7 @@
                         "value": "asdf"
                       }
                     ],
-                    "content": ["sdf"]
+                    "value": "asdf"
                   }
                 ]
               }
@@ -135,8 +134,7 @@
                             "name": "id",
                             "value": "asdf"
                           }
-                        ],
-                        "content": ["sdf"]
+                        ]
                       }
                     ]
                   }
@@ -181,8 +179,7 @@
                         "name": "id",
                         "value": "asdf"
                       }
-                    ],
-                    "content": ["sdf"]
+                    ]
                   }
                 ]
               }
