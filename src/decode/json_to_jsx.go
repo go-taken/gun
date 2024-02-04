@@ -115,6 +115,6 @@ func (g *Generate) newComponentJSX(data []html.HTML) {
 func (g *Generate) ToJSXString(data []html.HTML) string {
 	g.Mutex.Lock()
 	g.newComponentJSX(data)
-	g.Mutex.Unlock()
+	defer g.Mutex.Unlock()
 	return g.JSXComponent + "\n</>\n);};"
 }

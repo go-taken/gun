@@ -96,6 +96,6 @@ func (g *Generate) newComponentVue(tags []html.HTML) {
 func (g *Generate) ToVueString(tags []html.HTML) string {
 	g.Mutex.Lock()
 	g.newComponentVue(tags)
-	g.Mutex.Unlock()
+	defer g.Mutex.Unlock()
 	return g.Vue + "\n</template>"
 }

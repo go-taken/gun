@@ -144,9 +144,8 @@ func (g *Generate) newComponentHTML(data []html.HTML) {
 	}
 }
 func (g *Generate) ToHTMLComponentString(data []html.HTML) string {
-	g.Lock()
-	defer g.Unlock()
-
+	g.Mutex.Lock()
+	defer g.Mutex.Unlock()
 	g.newComponentHTML(data)
 	return g.HTMLComponent
 }
